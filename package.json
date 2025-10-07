@@ -6,33 +6,26 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.3",
-    "bcryptjs": "^3.0.2",
-    "cookie": "^1.0.2",
-    "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.19.1",
     "next": "15.5.4",
-    "prisma": "^6.16.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "qrcode": "^1.5.1"
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "qrcode": "^1.5.1",
+    "otplib": "^12.0.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/mongoose": "^5.11.96",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "eslint": "^9.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
-
-// const QRCode = require('qrcode'); // avoid at top-level if not installed
-const QRCode = await import('qrcode'); // dynamic import inside handler
+ 
