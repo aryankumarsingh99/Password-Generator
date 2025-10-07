@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "../../../../lib/mongo";
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, ctx: { params: { id: string } }) {
   try {
     const body = await req.json();
+    const { id } = ctx.params;
     const db = await getDb();
-    const { id } = params;
 
     const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { id };
     await db.collection("entries").updateOne(filter, { $set: body }, { upsert: false });
