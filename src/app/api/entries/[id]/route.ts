@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 import { getDb } from "../../../../lib/mongo";
 import { verifyToken } from "../../../../lib/jwt";
@@ -10,11 +10,10 @@ function getToken(req: Request) {
   return a.slice(7);
 }
 
-/** PUT must use the Request + context shape expected by Next.js App Router */
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, ctx: any) {
   try {
     const body = await req.json();
-    const { id } = params;
+    const id = ctx?.params?.id as string;
     const db = await getDb();
 
     const filter = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { id };
@@ -27,14 +26,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, ctx: any) {
   try {
     const token = getToken(req);
     const payload = token ? verifyToken(token) : null;
     if (!payload) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const db = await getDb();
-    const id = params.id;
+    const id = ctx?.params?.id as string;
     const doc = await db.collection("entries").findOne({ _id: new ObjectId(id) });
     if (!doc || doc.userId !== payload.sub) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
