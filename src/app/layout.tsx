@@ -11,7 +11,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50">
         <div className="app-root">
-          
           {children}
         </div>
       </body>

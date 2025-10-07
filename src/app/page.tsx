@@ -16,12 +16,14 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-2xl font-semibold">Password Vault</h1>
-              <p className="text-sm text-slate-400">Generate, save and manage passwords locally.</p>
+              <p className="text-sm text-slate-400 dark:text-slate-300">
+                Generate, save and manage passwords locally.
+              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-           
+            <ThemeToggle />
           </div>
         </header>
 
