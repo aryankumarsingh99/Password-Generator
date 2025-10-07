@@ -1,5 +1,4 @@
 import { authenticator } from "otplib";
-import QRCode from "qrcode";
 
 export function generateTotpSecret(label: string, issuer = "PasswordVault") {
   const secret = authenticator.generateSecret();
@@ -8,9 +7,15 @@ export function generateTotpSecret(label: string, issuer = "PasswordVault") {
 }
 
 export async function generateTotpQRDataUrl(otpauth: string) {
+  const QRCode = (await import("qrcode")).default ?? (await import("qrcode"));
   return await QRCode.toDataURL(otpauth);
 }
 
 export function verifyTotpToken(secret: string, token: string) {
   return authenticator.check(token, secret);
 }
+
+// example usage (no file change required)
+const secret = authenticator.generateSecret();
+const otpauth = authenticator.keyuri("user@example.com", "YourApp", secret);
+const valid = authenticator.check("123456", secret); // verify token

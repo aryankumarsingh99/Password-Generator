@@ -17,7 +17,8 @@
     "next": "15.5.4",
     "prisma": "^6.16.3",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "qrcode": "^1.5.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -32,3 +33,6 @@
     "typescript": "^5"
   }
 }
+
+// const QRCode = require('qrcode'); // avoid at top-level if not installed
+const QRCode = await import('qrcode'); // dynamic import inside handler
