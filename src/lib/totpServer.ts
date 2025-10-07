@@ -6,12 +6,12 @@ export function generateTotpSecret(label: string, issuer = "PasswordVault") {
   return { secret, otpauth };
 }
 
-export async function generateTotpQRDataUrl(otpauth: string) {
+export async function generateTotpQRDataUrl(otpauth: string): Promise<string> {
   const QRCode = (await import("qrcode")).default ?? (await import("qrcode"));
-  return await QRCode.toDataURL(otpauth);
+  return QRCode.toDataURL(otpauth);
 }
 
-export function verifyTotpToken(secret: string, token: string) {
+export function verifyTotpToken(secret: string, token: string): boolean {
   return authenticator.check(token, secret);
 }
 

@@ -43,7 +43,7 @@ export async function encryptString(plain: string, key: CryptoKey) {
   };
 }
 
-export async function decryptString(payload: { iv: string; data: string }, key: CryptoKey) {
+export async function decryptString(payload: { iv: string; data: string } | null | undefined, key: CryptoKey) {
   if (!payload || !payload.iv || !payload.data) return "";
   const iv = new Uint8Array(fromBase64(payload.iv));
   const ct = fromBase64(payload.data);
@@ -51,8 +51,11 @@ export async function decryptString(payload: { iv: string; data: string }, key: 
   return new TextDecoder().decode(dec);
 }
 
-export async function encryptEntryObject(obj: Record<string, any>, key: CryptoKey) {
-  const out: Record<string, any> = {};
+type EntryField = { iv: string; data: string } | null;
+type EntryRecord = Record<string, unknown>;
+
+export async function encryptEntryObject(obj: EntryRecord, key: CryptoKey) {
+  const out: Record<string, EntryField> = {};
   const fields = ["title", "username", "password", "url", "notes", "tags", "folder"];
   for (const k of fields) {
     const v = obj[k];
@@ -66,8 +69,12 @@ export async function encryptEntryObject(obj: Record<string, any>, key: CryptoKe
   return out;
 }
 
-export async function decryptEntryObject(doc: any, key: CryptoKey) {
-  const out: any = { id: doc.id ?? doc._id ?? (doc._id?.toString ? doc._id.toString() : undefined) };
+export async function decryptEntryObject(doc: EntryRecord, key: CryptoKey) {
+  const id =
+    (doc as any).id ??
+    (doc as any)._id ??
+    (typeof (doc as any)._id?.toString === "function" ? (doc as any)._id.toString() : undefined);
+  const out: Record<string, unknown> = { id };
   const fields = ["title", "username", "password", "url", "notes", "tags", "folder"];
   for (const k of fields) {
     const v = doc[k];
@@ -76,8 +83,8 @@ export async function decryptEntryObject(doc: any, key: CryptoKey) {
       continue;
     }
     try {
-      if (typeof v === "object" && "iv" in v && "data" in v) {
-        const dec = await decryptString(v, key);
+      if (typeof v === "object" && v !== null && "iv" in (v as any) && "data" in (v as any)) {
+        const dec = await decryptString(v as { iv: string; data: string }, key);
         if (k === "tags") {
           try {
             out.tags = JSON.parse(dec);
@@ -96,11 +103,11 @@ export async function decryptEntryObject(doc: any, key: CryptoKey) {
 }
 
 // Export / import helpers: operate on already-encrypted server blobs
-export function exportEncryptedEntries(entries: any[]) {
+export function exportEncryptedEntries(entries: unknown[]) {
   return new Blob([JSON.stringify(entries, null, 2)], { type: "application/json" });
 }
 
 export async function importEncryptedFile(file: File) {
   const txt = await file.text();
-  return JSON.parse(txt);
+  return JSON.parse(txt) as unknown;
 }

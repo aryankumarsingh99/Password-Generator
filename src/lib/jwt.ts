@@ -1,14 +1,16 @@
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-const secret = process.env.JWT_SECRET || "change_this";
+const SECRET = process.env.JWT_SECRET || "change_this_to_secure";
 
-export function signToken(payload: object, expiresIn = "7d") {
-  return jwt.sign(payload, secret, { expiresIn });
+export function signToken(payload: Record<string, unknown>, expiresIn = "7d"): string {
+  return jwt.sign(payload as JwtPayload, SECRET, { expiresIn });
 }
 
-export function verifyToken(token: string) {
+export function verifyToken(token: string): JwtPayload | null {
   try {
-    return jwt.verify(token, secret) as any;
+    const decoded = jwt.verify(token, SECRET);
+    if (typeof decoded === "string") return null;
+    return decoded as JwtPayload;
   } catch {
     return null;
   }
