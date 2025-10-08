@@ -1,34 +1,43 @@
 "use client";
 import React from "react";
-import { VaultEntry } from "../types";
 import PasswordItem from "./PasswordItem";
+import { VaultEntry } from "../types";
 
 export default function PasswordList({
-  entries,
+  entries = [],
   onEdit,
   onDelete,
-  onUpdate,
+  searchQuery = "",
 }: {
-  entries: VaultEntry[];
-  onEdit: (entry: VaultEntry) => void;
-  onDelete: (id: string) => void;
-  onUpdate: (entry: VaultEntry) => void;
+  entries?: VaultEntry[];
+  onEdit?: (e: VaultEntry) => void;
+  onDelete?: (id: string) => void;
+  searchQuery?: string;
 }) {
-  if (!entries || entries.length === 0) {
-    return <div className="text-sm text-slate-400">No saved entries</div>;
-  }
+  const filtered = (entries || []).filter((en) => {
+    const q = (searchQuery || "").trim().toLowerCase();
+    if (!q) return true;
+    return ((en.title ?? en.name ?? "").toLowerCase().includes(q) ||
+      (en.username ?? "").toLowerCase().includes(q) ||
+      (en.url ?? "").toLowerCase().includes(q));
+  });
+
+  if (!filtered.length) return <div className="text-sm text-slate-500 dark:text-slate-300">No entries found</div>;
 
   return (
-    <section className="w-full space-y-3" aria-label="Saved password entries" role="list">
-      {entries.map((e) => (
-        <PasswordItem
-          key={e.id ?? Math.random().toString(36).slice(2)}
-          entry={e}
-          onEdit={() => onEdit(e)}
-          onDelete={() => onDelete(e.id)}
-          onUpdate={onUpdate}
-        />
-      ))}
-    </section>
+    <div className="space-y-3 mt-3">
+      {filtered.map((e) => {
+        const keyId = String((e as any).id ?? (e as any)._id ?? JSON.stringify(e));
+        const idForDelete = String((e as any).id ?? (e as any)._id ?? "");
+        return (
+          <PasswordItem
+            key={keyId}
+            entry={e}
+            onEdit={() => onEdit?.(e as any)}
+            onDelete={() => onDelete?.(idForDelete)}
+          />
+        );
+      })}
+    </div>
   );
 }

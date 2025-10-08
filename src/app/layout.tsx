@@ -9,10 +9,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-50">
-        <div className="app-root">
-          {children}
-        </div>
+      <body className="min-h-screen flex flex-col bg-gradient-to-b from-white via-slate-50 to-slate-100 dark:from-slate-900 dark:via-slate-950 dark:to-black text-slate-900 dark:text-slate-50 antialiased">
+        {/* full-bleed header/content/footer allowed by layout; children should handle inner max width */}
+        <div className="w-full flex-1">{children}</div>
       </body>
     </html>
   );
